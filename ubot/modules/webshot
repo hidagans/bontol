@@ -1,0 +1,14 @@
+from ubot import *
+
+__MODULE__ = "webshot"
+__HELP__ = """
+<b>『 Bantuan untuk webshot 』</b>
+
+  <b>• Perintah:</b> <code>{0}ss [Link]</code>
+  <b>• Penjelasan:</b> Untuk mendapatkan screenshot dari link tersebut.
+""" 
+
+
+@PY.UBOT("webss", SUDO=True)
+async def _(client, message):
+    await take_ss(client, message)

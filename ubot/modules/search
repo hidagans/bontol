@@ -1,0 +1,23 @@
+from ubot import *
+
+__MODULE__ = "search"
+__HELP__ = """
+<b>『 Bantuan untuk search』</b>
+
+  <b>• Perintah:</b> <code>{0}pic [query]</code>
+  <b>• Penjelasan:</b> Untuk gambar secara limit 5.
+
+  <b>• Perintah:</b> <code>{0}gif [query]</code>
+  <b>• Penjelasan:</b> Untuk gif.
+"""
+
+
+
+@PY.UBOT("bing|pic", SUDO=True)
+async def _(client, message):
+    await pic_bing_cmd(client, message)
+
+
+@PY.UBOT("gif", SUDO=True)
+async def _(client, message):
+    await gif_cmd(client, message)

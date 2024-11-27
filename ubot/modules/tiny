@@ -1,0 +1,14 @@
+from ubot import *
+
+__MODULE__ = "tiny"
+__HELP__ = """
+<b>『 Bantuan untuk tiny 』</b>
+
+  <b>• Perintah:</b> <code>{0}tiny [reply to sticker]</code>
+  <b>• Perintah:</b> untuk merubah sticker menjadi lebih kecil.
+"""
+
+
+@PY.UBOT("tiny", SUDO=True)
+async def _(client, message):
+    await tiny_cmd(client, message)

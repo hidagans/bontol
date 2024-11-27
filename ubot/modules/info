@@ -1,0 +1,22 @@
+from ubot import *
+
+__MODULE__ = "info"
+__HELP__ = """
+ <b>『 Bantuan untuk info 』</b>
+
+  <b>• Perintah:</b> <code>{0}info [user_id/username/balas pesan]</code>
+  <b>• Penjelasan:</b> Untuk melihat informasi pengguna.
+
+  <b>• Perintah:</b> <code>{0}cinfo [user_id/username/balas pesan]</code>
+  <b>• Penjelasan:</b> Untuk melihat informasi obrolan.
+"""
+
+
+@PY.UBOT("whois|info", SUDO=True)
+async def _(client, message):
+    await info_cmd(client, message)
+
+
+@PY.UBOT("cwhois|cinfo", SUDO=True)
+async def _(client, message):
+    await cinfo_cmd(client, message)

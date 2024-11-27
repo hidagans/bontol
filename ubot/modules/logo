@@ -1,0 +1,17 @@
+from ubot import *
+
+__MODULE__ = "logo"
+__HELP__ = """
+ <b>『 Bantuan untuk logo 』</b>
+
+  <b>• Perintah:</b> <code>{0}logo [teks]</code>
+  <b>• Penjelasan:</b> Untuk membuat logo dengan kata random.
+
+  <b>• ᴘᴇʀɪɴᴛᴀʜ:</b> <code>{0}blogo [teks]</code>
+  <b>• ᴘᴇɴᴊᴇʟᴀsᴀɴ:</b> Untuk background menjadi hitam.
+"""
+
+
+@PY.UBOT("blogo|logo", SUDO=True)
+async def _(client, message):
+    await logo_cmd(client, message)

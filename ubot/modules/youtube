@@ -1,0 +1,22 @@
+from ubot import *
+
+__MODULE__ = "youtube"
+__HELP__ = """
+<b>『 Bantuan untuk youtube  』</b>
+
+  <b>• Perintah:</b> <code>{0}song [song link]</code>
+  <b>• Penjelasan:</b> Untuk mendownload music yang diinginkan.
+
+  <b>• Perintah:</b> <code>{0}vsong [video link]</code>
+  <b>• Penjelasan:</b> Untuk mendownload video yang diinginkan.
+"""
+
+
+@PY.UBOT("vsong", SUDO=True)
+async def _(client, message):
+    await vsong_cmd(client, message)
+
+
+@PY.UBOT("song", SUDO=True)
+async def _(client, message):
+    await song_cmd(client, message)
