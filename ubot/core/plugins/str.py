@@ -58,50 +58,50 @@ async def ping_cmd(client, message):
         await client.invoke(Ping(ping_id=0))
     except Exception as e:
         print(f"Error during ping: {e}")
-        return await message.reply("❌ Ping failed.")
+        return await message.reply("❌ <b>Ping gagal.</b>")
+
     end = datetime.now()
-    
     uptime = await get_time((time() - start_time))
     delta_ping = round((end - start).microseconds / 1000, 2)  # Ping dalam milidetik
 
-    emot_pong = await get_var(client.me.id, "EMOJI_PING_PONG") or "🖕🏻"
-    emot_uptime = await get_var(client.me.id, "EMOJI_UPTIME") or "🖕🏻"
+    # Dapatkan emoji khusus atau default
+    emot_pong = await get_var(client.me.id, "EMOJI_PING_PONG") or "🏓"
+    emot_uptime = await get_var(client.me.id, "EMOJI_UPTIME") or "⏰"
     emot_anuan = await get_var(client.me.id, "EMOJI_ANUAN") or "😱"
 
-    # Mencetak ID emoji untuk debugging
-    print(f"Emoticons - Pong: {emot_pong}, Uptime: {emot_uptime}, Anuan: {emot_anuan}")
+    # Animasi awal
+    xx = await edit_or_reply(message, "🏓 <b>Memulai ping...</b>")
+    await asyncio.sleep(1)
 
-    xx = await edit_or_reply(message, "🖕🏻")
-    await asyncio.sleep(2)
-    
+    # Format pesan dengan warna dan animasi
     if client.me.is_premium:
         _ping = f"""
-<b>{emot_pong} Pong !!</b> <code>{delta_ping} ms</code>
-<b>{emot_uptime} Uptime -</b> <code>{uptime}</code>
+<code>───⬤───────⬤───────⬤───</code>
+<b>{emot_pong} Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
+<b>{emot_uptime} Uptime:</b> <code><b><i>{uptime}</i></b></code>
+<code>───⬤───────⬤───────⬤───</code>
 """
     else:
         _ping = f"""
-<b>{emot_pong} Pong !!</b> <code>{delta_ping} ms</code>
-<b>{emot_anuan} Uptime -</b> <code>{uptime}</code>
+<code>─⬤──⬤──⬤─</code>
+<b>{emot_pong} Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
+<b>{emot_anuan} Uptime:</b> <code><b><i>{uptime}</i></b></code>
+<code>─⬤──⬤──⬤─</code>
 """
 
     try:
-        # Pastikan xx adalah objek Message yang valid
         await asyncio.gather(
-            xx.delete(),  # Pastikan untuk menunggu penghapusan
+            xx.delete(),  # Hapus animasi awal
             client.send_message(
                 message.chat.id,
                 _ping,
-                reply_to_message_id=message.message_id if hasattr(message, 'message_id') else None  # Periksa atribut message_id
+                reply_to_message_id=message.message_id if hasattr(message, 'message_id') else None
             ),
         )
     except Exception as e:
         print(f"Exception occurred: {e}")
         if hasattr(xx, 'edit'):
             await xx.edit(_ping, disable_web_page_preview=True)
-
-
-
 
 async def start_cmd(client, message):
     await add_served_user(message.from_user.id)
