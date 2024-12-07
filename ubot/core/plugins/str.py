@@ -77,7 +77,7 @@ async def ping_cmd(client: Client, message: Message):
     emot_anuan = await get_var(client.me.id, "EMOJI_ANUAN") or "😱"
 
     # Animasi awal
-    xx = await edit_or_reply(message, "🏓 <b>Memulai ping...</b>", quote=True)
+    xx = await edit_or_reply(message, "🏓 <b>Memulai ping...</b>")
     await asyncio.sleep(1)
 
     # Format pesan HTML
