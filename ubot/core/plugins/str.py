@@ -52,13 +52,13 @@ def ReplyCheck(message: Message):
 
     return reply_id
 
-async def ping_cmd(client, message):
+async def ping_cmd(client: Client, message: Message):
     start = datetime.now()
     try:
         await client.invoke(Ping(ping_id=0))
     except Exception as e:
         print(f"Error during ping: {e}")
-        return await message.reply("❌ <b>Ping gagal.</b>")
+        return await message.reply("❌ <b>Ping gagal.</b>", quote=True)
 
     end = datetime.now()
     uptime = await get_time((time() - start_time))
@@ -70,32 +70,33 @@ async def ping_cmd(client, message):
     emot_anuan = await get_var(client.me.id, "EMOJI_ANUAN") or "😱"
 
     # Animasi awal
-    xx = await edit_or_reply(message, "🏓 <b>Memulai ping...</b>")
+    xx = await edit_or_reply(message, "🏓 <b>Memulai ping...</b>", quote=True)
     await asyncio.sleep(1)
 
-    # Format pesan dengan warna dan animasi
+    # Format pesan HTML
     if client.me.is_premium:
-        _ping = f"""
-<code>───⬤───────⬤───────⬤───</code>
-<b>{emot_pong} Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
-<b>{emot_uptime} Uptime:</b> <code><b><i>{uptime}</i></b></code>
-<code>───⬤───────⬤───────⬤───</code>
-"""
+        _ping = (
+            f"───⬤──────⬤──────⬤───\n"
+            f"<b>{emot_pong} Pong:</b> <code>{delta_ping} ms</code>\n"
+            f"<b>{emot_uptime} Uptime:</b> <code>{uptime}</code>\n"
+            f"───⬤──────⬤──────⬤───"
+        )
     else:
-        _ping = f"""
-<code>─⬤──⬤──⬤─</code>
-<b>{emot_pong} Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
-<b>{emot_anuan} Uptime:</b> <code><b><i>{uptime}</i></b></code>
-<code>─⬤──⬤──⬤─</code>
-"""
+        _ping = (
+            f"─⬤──⬤──⬤─\n"
+            f"<b>{emot_pong} Pong:</b> <code>{delta_ping} ms</code>\n"
+            f"<b>{emot_anuan} Uptime:</b> <code>{uptime}</code>\n"
+            f"─⬤──⬤──⬤─"
+        )
 
     try:
         await asyncio.gather(
             xx.delete(),  # Hapus animasi awal
             client.send_message(
-                message.chat.id,
-                _ping,
-                reply_to_message_id=message.message_id if hasattr(message, 'message_id') else None
+                chat_id=message.chat.id,
+                text=_ping,
+                reply_to_message_id=message.message_id if hasattr(message, 'message_id') else None,
+                disable_web_page_preview=True,
             ),
         )
     except Exception as e:
