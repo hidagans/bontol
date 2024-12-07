@@ -52,13 +52,20 @@ def ReplyCheck(message: Message):
 
     return reply_id
 
+from datetime import datetime
+import asyncio
+from time import time
+from pyrogram.types import Message
+from pyrogram import Client
+
+
 async def ping_cmd(client: Client, message: Message):
     start = datetime.now()
     try:
         await client.invoke(Ping(ping_id=0))
     except Exception as e:
         print(f"Error during ping: {e}")
-        return await message.reply("❌ Ping gagal.")
+        return await message.reply("❌ <b>Ping gagal.</b>", quote=True)
 
     end = datetime.now()
     uptime = await get_time((time() - start_time))
@@ -69,23 +76,40 @@ async def ping_cmd(client: Client, message: Message):
     emot_uptime = await get_var(client.me.id, "EMOJI_UPTIME") or "⏰"
     emot_anuan = await get_var(client.me.id, "EMOJI_ANUAN") or "😱"
 
-    # Format pesan dengan tanda kutipan `>`
+    # Animasi awal
+    xx = await edit_or_reply(message, "🏓 <b>Memulai ping...</b>", quote=True)
+    await asyncio.sleep(1)
+
+    # Format pesan HTML
     if client.me.is_premium:
         _ping = (
-            f"> **{emot_pong} Pong:** `{delta_ping} ms`\n"
-            f"> **{emot_uptime} Uptime:** `{uptime}`"
+            f"───⬤──────⬤──────⬤───\n"
+            f">><b>{emot_pong} Pong:</b> <code>{delta_ping} ms</code>\n"
+            f">><b>{emot_uptime} Uptime:</b> <code>{uptime}</code>\n"
+            f"───⬤──────⬤──────⬤───"
         )
     else:
         _ping = (
-            f"> **{emot_pong} Pong:** `{delta_ping} ms`\n"
-            f"> **{emot_anuan} Uptime:** `{uptime}`"
+            f"─⬤──⬤──⬤─\n"
+            f"<b>{emot_pong} Pong:</b> <code>{delta_ping} ms</code>\n"
+            f"<b>{emot_anuan} Uptime:</b> <code>{uptime}</code>\n"
+            f"─⬤──⬤──⬤─"
         )
 
-    # Mengedit atau membalas pesan
     try:
-        await message.reply(_ping, disable_web_page_preview=True)
+        await asyncio.gather(
+            xx.delete(),  # Hapus animasi awal
+            client.send_message(
+                chat_id=message.chat.id,
+                text=_ping,
+                reply_to_message_id=message.message_id if hasattr(message, 'message_id') else None,
+                disable_web_page_preview=True,
+            ),
+        )
     except Exception as e:
         print(f"Exception occurred: {e}")
+        if hasattr(xx, 'edit'):
+            await xx.edit(_ping, disable_web_page_preview=True)
 
 async def start_cmd(client, message):
     await add_served_user(message.from_user.id)
