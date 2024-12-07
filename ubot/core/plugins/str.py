@@ -80,21 +80,20 @@ async def ping_cmd(client: Client, message: Message):
     xx = await edit_or_reply(message, "🏓 <b>Memulai ping...</b>")
     await asyncio.sleep(1)
 
-    # Format pesan HTML
     if client.me.is_premium:
-        _ping = (
-            f"───⬤──────⬤──────⬤───\n"
-            f">><b>{emot_pong} Pong:</b> <code>{delta_ping} ms</code>\n"
-            f">><b>{emot_uptime} Uptime:</b> <code>{uptime}</code>\n"
-            f"───⬤──────⬤──────⬤───"
-        )
+        _ping = f"""
+<code>───⬤───────⬤───────⬤───</code>
+<b>{emot_pong} Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
+<b>{emot_uptime} Uptime:</b> <code><b><i>{uptime}</i></b></code>
+<code>───⬤───────⬤───────⬤───</code>
+"""
     else:
-        _ping = (
-            f"─⬤──⬤──⬤─\n"
-            f"<b>{emot_pong} Pong:</b> <code>{delta_ping} ms</code>\n"
-            f"<b>{emot_anuan} Uptime:</b> <code>{uptime}</code>\n"
-            f"─⬤──⬤──⬤─"
-        )
+        _ping = f"""
+<code>─⬤──⬤──⬤─</code>
+<b>{emot_pong} Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
+<b>{emot_anuan} Uptime:</b> <code><b><i>{uptime}</i></b></code>
+<code>─⬤──⬤──⬤─</code>
+"""
 
     try:
         await asyncio.gather(
