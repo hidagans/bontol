@@ -65,13 +65,13 @@ async def ping_cmd(client: Client, message: Message):
     delta_ping = round((end - start).microseconds / 1000, 2)
 
     # Dapatkan emoji khusus atau default
-    emot_pong_id = await get_var(client.me.id, "EMOJI_PING_PONG") or None
+    emot_pong_id = await get_var(client.me.id, "EMOJI_PING_PONG")
     emot_pong = f"<emoji id='{emot_pong_id}'></emoji>" if emot_pong_id else "🏓"
 
-    emot_uptime_id = await get_var(client.me.id, "EMOJI_UPTIME") or None
+    emot_uptime_id = await get_var(client.me.id, "EMOJI_UPTIME")
     emot_uptime = f"<emoji id='{emot_uptime_id}'></emoji>" if emot_uptime_id else "⏰"
 
-    emot_anuan_id = await get_var(client.me.id, "EMOJI_MENTION") or None
+    emot_anuan_id = await get_var(client.me.id, "EMOJI_MENTION")
     emot_anuan = f"<emoji id='{emot_anuan_id}'></emoji>" if emot_anuan_id else "😱"
 
     # Animasi awal
@@ -81,8 +81,8 @@ async def ping_cmd(client: Client, message: Message):
     if client.me.is_premium:
         _ping = f"""
 <code>───⬤───────⬤───────⬤───</code>
-<b><emoji id='{emot_pong_id}'></emoji> Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
-<b><emoji id='{emot_uptime_id}'></emoji> Uptime:</b> <code><b><i>{uptime}</i></b></code>
+<b>{emot_pong} Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
+<b>{emot_uptime} Uptime:</b> <code><b><i>{uptime}</i></b></code>
 <code>───⬤───────⬤───────⬤───</code>
 """
     else:
