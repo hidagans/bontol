@@ -66,13 +66,13 @@ async def ping_cmd(client: Client, message: Message):
 
     # Dapatkan emoji khusus atau default
     emot_pong_id = await get_var(client.me.id, "EMOJI_PING_PONG")
-    emot_pong = f"<emoji id='{emot_pong_id}'></emoji>" if emot_pong_id else "🏓"
+    emot_pong = f"<emoji id='{emot_pong_id}'>😎</emoji>" if emot_pong_id else "🏓"
 
     emot_uptime_id = await get_var(client.me.id, "EMOJI_UPTIME")
-    emot_uptime = f"<emoji id='{emot_uptime_id}'></emoji>" if emot_uptime_id else "⏰"
+    emot_uptime = f"<emoji id='{emot_uptime_id}'>🥰</emoji>" if emot_uptime_id else "⏰"
 
     emot_anuan_id = await get_var(client.me.id, "EMOJI_MENTION")
-    emot_anuan = f"<emoji id='{emot_anuan_id}'></emoji>" if emot_anuan_id else "😱"
+    emot_anuan = f"<emoji id='{emot_anuan_id}'>😱</emoji>" if emot_anuan_id else "😱"
 
     # Animasi awal
     xx = await edit_or_reply(message, f"{emot_pong} <b>Memulai ping...</b>")
