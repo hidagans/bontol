@@ -26,11 +26,11 @@ async def change_emot(client, message):
 
         if not client.me.is_premium:
             return await msg.edit(
-                "<b>Untuk menggunakan perintah ini akun anda harus premium terlebih dahulu</b>"
+                "<b>Untuk menggunakan perintah ini, akun Anda harus premium terlebih dahulu.</b>"
             )
 
         if len(message.command) < 3:
-            return await msg.edit("<b>Perintah berupa query dan value</b>")
+            return await msg.edit("<b>Gunakan format perintah yang benar: /change_emot [query] [value]</b>")
 
         query_mapping = {
             "pong": "EMOJI_PING_PONG",
@@ -40,29 +40,28 @@ async def change_emot(client, message):
             "done": "EMOJI_DONE",
             "filed": "EMOJI_FILED"
         }
-        command, mapping, value = message.command[:3]
 
-        if mapping.lower() in query_mapping:
-            query_var = query_mapping[mapping.lower()]
-            emoji_id = next((
-                entity.custom_emoji_id
-                for entity in message.entities
-                if entity.custom_emoji_id
-            ), None)
+        _, mapping, value = message.command[:3]
 
-            if emoji_id:
-                await set_var(client.me.id, query_var, emoji_id)
-                await msg.edit(
-                    f"<b>✅ <code>{query_var}</code> Berhasil diubah ke:</b> <emoji id={emoji_id}>{value}</emoji>"
-                )
-            else:
-                await msg.edit(
-                    "<b>Emoji tidak ditemukan. Pastikan Anda menggunakan emoji kustom.</b>"
-                )
+        if mapping.lower() not in query_mapping:
+            return await msg.edit("<b>Mapping tidak ditemukan. Cek nama query Anda.</b>")
+
+        query_var = query_mapping[mapping.lower()]
+        emoji_id = next(
+            (entity.custom_emoji_id for entity in message.entities if entity.custom_emoji_id), 
+            None
+        )
+
+        if emoji_id:
+            await set_var(client.me.id, query_var, emoji_id)
+            await msg.edit(
+                f"<b>✅ <code>{query_var}</code> berhasil diubah ke:</b> <emoji id={emoji_id}>{value}</emoji>"
+            )
         else:
-            await msg.edit("<b>Mapping tidak ditemukan</b>")
-    
-    except Exception as error:
-        logging.error(f"Error changing emoji: {error}")
-        await msg.edit(f"Terjadi kesalahan: {error}")
+            await msg.edit(
+                "<b>Emoji tidak ditemukan. Pastikan Anda menggunakan emoji kustom yang valid.</b>"
+            )
 
+    except Exception as error:
+        logging.error(f"Error changing emoji: {error}", exc_info=True)
+        await msg.edit(f"Terjadi kesalahan: {error}")
