@@ -52,13 +52,6 @@ def ReplyCheck(message: Message):
 
     return reply_id
 
-from datetime import datetime
-import asyncio
-from time import time
-from pyrogram.types import Message
-from pyrogram import Client
-
-
 async def ping_cmd(client: Client, message: Message):
     start = datetime.now()
     try:
@@ -73,8 +66,10 @@ async def ping_cmd(client: Client, message: Message):
 
     # Dapatkan emoji khusus atau default
     emot_pong = await get_var(client.me.id, "EMOJI_PING_PONG") or "🏓"
+    emot_pong = f"<emoji id={emot_pong}></emoji>" if emot_pong else "🏓"
     emot_uptime = await get_var(client.me.id, "EMOJI_UPTIME") or "⏰"
-    emot_anuan = await get_var(client.me.id, "EMOJI_ANUAN") or "😱"
+    prem_uptime = f"<emoji id={emot_uptime}></emoji>" if emot_uptime else "⏰"
+    emot_anuan = await get_var(client.me.id, "EMOJI_MENTION") or "😱"
 
     # Animasi awal
     xx = await edit_or_reply(message, "🏓 <b>Memulai ping...</b>")
