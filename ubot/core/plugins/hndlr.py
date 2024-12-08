@@ -21,14 +21,16 @@ async def kok_anjeng(client, message):
         await Tm.edit(f"Terjadi kesalahan: {error}")
         
 async def change_emot(client, message):
-    try:
-        msg = await message.reply("Processing...", quote=True)
+    msg = await message.reply("Processing...", quote=True)
 
+    try:
+        # Cek apakah akun premium
         if not client.me.is_premium:
             return await msg.edit(
                 "<b>Untuk menggunakan perintah ini, akun Anda harus premium terlebih dahulu.</b>"
             )
 
+        # Cek format perintah
         if len(message.command) < 3:
             return await msg.edit("<b>Gunakan format perintah yang benar: /change_emot [query] [value]</b>")
 
@@ -43,19 +45,24 @@ async def change_emot(client, message):
 
         _, mapping, value = message.command[:3]
 
+        # Validasi mapping
         if mapping.lower() not in query_mapping:
             return await msg.edit("<b>Mapping tidak ditemukan. Cek nama query Anda.</b>")
 
         query_var = query_mapping[mapping.lower()]
-        emoji_id = next(
-            (entity.custom_emoji_id for entity in message.entities if entity.custom_emoji_id), 
-            None
-        )
+
+        # Cek apakah ada entitas emoji dalam pesan
+        emoji_id = None
+        if message.entities:
+            emoji_id = next(
+                (entity.custom_emoji_id for entity in message.entities if entity.custom_emoji_id),
+                None
+            )
 
         if emoji_id:
             await set_var(client.me.id, query_var, emoji_id)
             await msg.edit(
-                f"<b>✅ <code>{query_var}</code> berhasil diubah ke:</b> <emoji id={emoji_id}>{value}</emoji>"
+                f"<b>✅ <code>{query_var}</code> berhasil diubah ke:</b> <emoji id='{emoji_id}'>{value}</emoji>"
             )
         else:
             await msg.edit(
