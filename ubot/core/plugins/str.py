@@ -81,8 +81,8 @@ async def ping_cmd(client: Client, message: Message):
     if client.me.is_premium:
         _ping = f"""
 <code>───⬤───────⬤───────⬤───</code>
-<b>{emot_pong} Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
-<b>{emot_uptime} Uptime:</b> <code><b><i>{uptime}</i></b></code>
+<b><emoji id='{emot_pong_id}'></emoji> Pong:</b> <code><b><i>{delta_ping} ms</i></b></code>
+<b><emoji id='{emot_uptime_id}'></emoji> Uptime:</b> <code><b><i>{uptime}</i></b></code>
 <code>───⬤───────⬤───────⬤───</code>
 """
     else:
