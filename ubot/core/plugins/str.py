@@ -62,17 +62,20 @@ async def ping_cmd(client: Client, message: Message):
 
     end = datetime.now()
     uptime = await get_time((time() - start_time))
-    delta_ping = round((end - start).microseconds / 1000, 2)  # Ping dalam milidetik
+    delta_ping = round((end - start).microseconds / 1000, 2)
 
     # Dapatkan emoji khusus atau default
-    emot_pong = await get_var(client.me.id, "EMOJI_PING_PONG") or "🏓"
-    emot_pong = f"<emoji id={emot_pong}></emoji>" if emot_pong else "🏓"
-    emot_uptime = await get_var(client.me.id, "EMOJI_UPTIME") or "⏰"
-    prem_uptime = f"<emoji id={emot_uptime}></emoji>" if emot_uptime else "⏰"
-    emot_anuan = await get_var(client.me.id, "EMOJI_MENTION") or "😱"
+    emot_pong_id = await get_var(client.me.id, "EMOJI_PING_PONG") or None
+    emot_pong = f"<emoji id='{emot_pong_id}'></emoji>" if emot_pong_id else "🏓"
+
+    emot_uptime_id = await get_var(client.me.id, "EMOJI_UPTIME") or None
+    emot_uptime = f"<emoji id='{emot_uptime_id}'></emoji>" if emot_uptime_id else "⏰"
+
+    emot_anuan_id = await get_var(client.me.id, "EMOJI_MENTION") or None
+    emot_anuan = f"<emoji id='{emot_anuan_id}'></emoji>" if emot_anuan_id else "😱"
 
     # Animasi awal
-    xx = await edit_or_reply(message, "🏓 <b>Memulai ping...</b>")
+    xx = await edit_or_reply(message, f"{emot_pong} <b>Memulai ping...</b>")
     await asyncio.sleep(1)
 
     if client.me.is_premium:
