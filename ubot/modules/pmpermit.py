@@ -252,12 +252,12 @@ async def _(client, message):
 
     count = 0
     async for msg in client.get_chat_history(message.chat.id):
-        if msg.service:  # Perbaikan indentasi
+        if msg.new_chat_members:
             print(f"Pesan layanan ditemukan: {msg.service}, ID: {msg.id}")
-            if msg.service == "MessageServiceType.NEW_CHAT_MEMBERS":
-                await msg.delete()
-                count += 1
-
+            await msg.delete()
+            count += 1
+    
     await message.reply(f"Pembersihan selesai. {count} pesan layanan telah dihapus.")
+
 
 
