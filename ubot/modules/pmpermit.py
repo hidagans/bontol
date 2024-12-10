@@ -249,8 +249,13 @@ async def delete_service_message(message):
 @PY.UBOT("clean")
 async def _(client, message):
     print("Memulai pembersihan pesan layanan...")
+
+    count = 0
+    async for msg in client.get_chat_history(message.chat.id, limit=100):
+        if msg.service == "MessageServiceType.NEW_CHAT_MEMBERS":
+            await msg.delete()
+            print(f"Pesan {msg.id} berhasil dihapus.")
+            count += 1
     
-    async for msg in client.get_chat_history(message.chat.id):
-        await delete_service_message(msg)
-    
-    print("Pembersihan selesai.")
+    await message.reply(f"Pembersihan selesai. {count} pesan layanan telah dihapus.")
+
