@@ -1,7 +1,6 @@
 from gc import get_objects
 
 from pyrogram import Client, filters
-from pyrogram.types import Message
 from pykeyboard import InlineKeyboard
 from pyrogram.types import (InlineKeyboardButton, InlineQueryResultArticle,
                             InlineQueryResultPhoto, InlineQueryResultVideo,
