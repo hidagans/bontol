@@ -240,14 +240,14 @@ async def delete_old_message(message, msg_id):
         pass
 
 # Fungsi untuk menghapus pesan layanan
-async def delete_service_message(message: Message):
+async def delete_service_message(message):
     if message.service == "MessageServiceType.NEW_CHAT_MEMBERS":
         await message.delete()
         print(f"Pesan {message.id} berhasil dihapus.")
 
 # Perintah untuk membersihkan pesan sebelumnya
-@PY.ubot("clean")
-async def clean_service(client: Client, message: Message):
+@PY.UBOT("clean")
+async def _(client, message):
     print("Memulai pembersihan pesan layanan...")
     
     async for msg in client.get_chat_history(message.chat.id, limit=100):
