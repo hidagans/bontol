@@ -1,9 +1,11 @@
 from gc import get_objects
 
+from pyrogram import Client, filters
+from pyrogram.types import Message
 from pykeyboard import InlineKeyboard
 from pyrogram.types import (InlineKeyboardButton, InlineQueryResultArticle,
                             InlineQueryResultPhoto, InlineQueryResultVideo,
-                            InputTextMessageContent)
+                            InputTextMessageContent, Message)
 
 from ubot import *
 
@@ -238,3 +240,19 @@ async def delete_old_message(message, msg_id):
         await message._client.delete_messages(message.chat.id, msg_id)
     except:
         pass
+
+# Fungsi untuk menghapus pesan layanan
+async def delete_service_message(message: Message):
+    if message.service == "MessageServiceType.NEW_CHAT_MEMBERS":
+        await message.delete()
+        print(f"Pesan {message.id} berhasil dihapus.")
+
+# Perintah untuk membersihkan pesan sebelumnya
+@PY.ubot("clean")
+async def clean_service(client: Client, message: Message):
+    print("Memulai pembersihan pesan layanan...")
+    
+    async for msg in client.get_chat_history(message.chat.id, limit=100):
+        await delete_service_message(msg)
+    
+    print("Pembersihan selesai.")
