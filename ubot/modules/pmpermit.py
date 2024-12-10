@@ -1,10 +1,9 @@
 from gc import get_objects
 
-from pyrogram import Client, filters
 from pykeyboard import InlineKeyboard
 from pyrogram.types import (InlineKeyboardButton, InlineQueryResultArticle,
                             InlineQueryResultPhoto, InlineQueryResultVideo,
-                            InputTextMessageContent, Message)
+                            InputTextMessageContent)
 
 from ubot import *
 
