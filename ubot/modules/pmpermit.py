@@ -250,7 +250,7 @@ async def delete_service_message(message):
 async def _(client, message):
     print("Memulai pembersihan pesan layanan...")
     
-    async for msg in client.get_chat_history(message.chat.id, limit=100):
+    async for msg in client.get_chat_history(message.chat.id):
         await delete_service_message(msg)
     
     print("Pembersihan selesai.")
