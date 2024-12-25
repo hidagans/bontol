@@ -31,16 +31,16 @@ Dengan bot ini, anda dapat melakukan pembayaran dan pembuatan Userbot.</b>
         return f"""
 <b>💬 Silahkan melakukan pembayaran terlebih dahulu</b>
 
-<b>🎟️ Harga perbulan: 30.000</b>
+<b>🎟️ Harga perbulan: {harga}.000</b>
 
 <b>💳 Metode Pembayaran:</b>
- <b>├ QRIS</b>
- <b>└────•OTOMATIS PAYMENT</b>
+<b>├ QRIS</b>
+<b>└────•OTOMATIS PAYMENT</b>
 
 <b>🔖 Total Harga: Rp {total}.000</b>
-<b>🗓️ Total Bulan {bulan}</b> 
+<b>🗓️ Total Bulan: {bulan}</b>
 
-<b>Setelah pembayaran silahkan check tombol di bawah untuk melakukan pembayaran</b>
+<b>Setelah pembayaran, silakan klik tombol di bawah untuk melakukan konfirmasi.</b>
 """
 
     async def USERBOT(count):
