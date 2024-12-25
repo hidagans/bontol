@@ -1,4 +1,4 @@
-from ubot import **
+from ubot import *
 
 __MODULE__ = "jaseb"
 __HELP__ = """
