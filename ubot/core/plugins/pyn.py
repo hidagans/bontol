@@ -100,6 +100,10 @@ async def confirm_callback(client, callback_query):
         email_message = await bot.listen(user_id)
         payer_email = email_message.text
         
+        # Mendapatkan jumlah bulan dari callback data
+        bulan = int(callback_query.data.split()[1])
+        amount = 30 * bulan * 1000  # Menghitung jumlah pembayaran
+        
         # Membuat invoice
         invoice_url, invoice_id = await create_invoice(amount, user_id, payer_email)
         
