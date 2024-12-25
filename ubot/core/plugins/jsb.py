@@ -20,7 +20,7 @@ async def save_jaseb_settings():
     await jaseb_db.set_jaseb_interval(jaseb_interval)
     await jaseb_db.set_jaseb_target(jaseb_target)
 
-async def set_jaseb_active(active: bool, client: Client):
+async def set_jaseb_active(active: bool, client):
     global jaseb_active
     jaseb_active = active
     if active:
@@ -41,7 +41,7 @@ async def set_jaseb_target(target: int):
     jaseb_target = target
     await save_jaseb_settings()
 
-async def jaseb_sender(client: Client):
+async def jaseb_sender(client):
     global jaseb_active, jaseb_text, jaseb_interval, jaseb_target
     while jaseb_active:
         if jaseb_target:
