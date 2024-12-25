@@ -68,9 +68,8 @@ async def info_jaseb_command(client: Client, message: Message):
     user_id = message.from_user.id
     jaseb_status, jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
 
-    # Periksa apakah jaseb_targets adalah iterable
-    print(f"jaseb_targets: {jaseb_targets} (type: {type(jaseb_targets)})")
-    if isinstance(jaseb_targets, (list, set, tuple)):
+    # Pastikan tipe data jaseb_targets adalah iterable
+    if type(jaseb_targets) in (list, set, tuple):  # Gunakan `type()` untuk menghindari masalah isinstance
         targets_str = ', '.join(str(target) for target in jaseb_targets)
     else:
         targets_str = 'Tidak diatur'
@@ -83,6 +82,7 @@ async def info_jaseb_command(client: Client, message: Message):
         f"Targets: {targets_str}"
     )
     await message.reply_text(info)
+
 
 
 @PY.UBOT("rmjasebtarget", SUDO=True)
