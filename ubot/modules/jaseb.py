@@ -1,4 +1,4 @@
-from ubot import *
+from pyrogram import Client
 
 __MODULE__ = "jaseb"
 __HELP__ = """
@@ -15,6 +15,12 @@ __HELP__ = """
 
   <b> Perintah:</b> <code>{0}setjasebtarget (ID grup)</code>
   <b> Penjelasan:</b> Untuk mengatur target grup atau channel Jaseb.
+
+  <b> Perintah:</b> <code>{0}infojaseb</code>
+  <b> Penjelasan:</b> Untuk menampilkan informasi pengaturan Jaseb saat ini.
+
+  <b> Perintah:</b> <code>{0}rmjasebtarget</code>
+  <b> Penjelasan:</b> Untuk menghapus target Jaseb yang disimpan.
 """
 
 @PY.UBOT("setjaseb", SUDO=True)
@@ -53,5 +59,18 @@ async def set_jaseb_target_command(client: Client, message: Message):
     except ValueError:
         await message.reply_text("ID grup harus berupa angka.")
 
-# Memuat pengaturan saat bot dijalankan
-asyncio.create_task(load_jaseb_settings())
+@PY.UBOT("infojaseb", SUDO=True)
+async def info_jaseb_command(client: Client, message: Message):
+    global jaseb_text, jaseb_interval, jaseb_target
+    info = (
+        f"Jaseb Info:\n"
+        f"Text: {jaseb_text}\n"
+        f"Interval: {jaseb_interval} detik\n"
+        f"Target: {jaseb_target if jaseb_target else 'Tidak diatur'}"
+    )
+    await message.reply_text(info)
+
+@PY.UBOT("rmjasebtarget", SUDO=True)
+async def remove_jaseb_target_command(client: Client, message: Message):
+    await remove_jaseb_target()
+    await message.reply_text("Target Jaseb dihapus.")
