@@ -67,7 +67,13 @@ async def set_jaseb_target_command(client: Client, message: Message):
 async def info_jaseb_command(client: Client, message: Message):
     user_id = message.from_user.id
     jaseb_status, jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
-    targets_str = ', '.join(str(target) for target in jaseb_targets) if jaseb_targets else 'Tidak diatur'
+
+    # Validasi tipe data jaseb_targets
+    if isinstance(jaseb_targets, (list, set, tuple)):
+        targets_str = ', '.join(str(target) for target in jaseb_targets)
+    else:
+        targets_str = 'Tidak diatur'
+
     info = (
         f"Jaseb Info:\n"
         f"Status: {jaseb_status}\n"
@@ -76,6 +82,7 @@ async def info_jaseb_command(client: Client, message: Message):
         f"Targets: {targets_str}"
     )
     await message.reply_text(info)
+
 
 @PY.UBOT("rmjasebtarget", SUDO=True)
 async def remove_jaseb_target_command(client: Client, message: Message):
