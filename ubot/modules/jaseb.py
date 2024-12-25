@@ -24,7 +24,7 @@ __HELP__ = """
 """
 
 @PY.UBOT("setjaseb", SUDO=True)
-async def set_jaseb(client: Client, message: Message):
+async def set_jaseb(client, message):
     arg = message.text.split(maxsplit=1)[1] if len(message.text.split()) > 1 else ""
     if arg == "on":
         await set_jaseb_active(True, client)
@@ -36,13 +36,13 @@ async def set_jaseb(client: Client, message: Message):
         await message.reply_text("Gunakan perintah .setjaseb on/off")
 
 @PY.UBOT("setjasebtext", SUDO=True)
-async def set_jaseb_text_command(client: Client, message: Message):
+async def set_jaseb_text_command(client, message):
     text = message.text.split(maxsplit=1)[1] if len(message.text.split()) > 1 else ""
     await set_jaseb_text(text)
     await message.reply_text(f"Teks Jaseb diatur ke: {text}")
 
 @PY.UBOT("setjasebinterval", SUDO=True)
-async def set_jaseb_interval_command(client: Client, message: Message):
+async def set_jaseb_interval_command(client, message):
     try:
         interval = int(message.text.split(maxsplit=1)[1])
         await set_jaseb_interval(interval)
@@ -51,7 +51,7 @@ async def set_jaseb_interval_command(client: Client, message: Message):
         await message.reply_text("Interval harus berupa angka.")
 
 @PY.UBOT("setjasebtarget", SUDO=True)
-async def set_jaseb_target_command(client: Client, message: Message):
+async def set_jaseb_target_command(client, message):
     try:
         target = int(message.text.split(maxsplit=1)[1])
         await set_jaseb_target(target)
@@ -60,7 +60,7 @@ async def set_jaseb_target_command(client: Client, message: Message):
         await message.reply_text("ID grup harus berupa angka.")
 
 @PY.UBOT("infojaseb", SUDO=True)
-async def info_jaseb_command(client: Client, message: Message):
+async def info_jaseb_command(client, message):
     global jaseb_text, jaseb_interval, jaseb_target
     info = (
         f"Jaseb Info:\n"
@@ -71,6 +71,6 @@ async def info_jaseb_command(client: Client, message: Message):
     await message.reply_text(info)
 
 @PY.UBOT("rmjasebtarget", SUDO=True)
-async def remove_jaseb_target_command(client: Client, message: Message):
+async def remove_jaseb_target_command(client, message):
     await remove_jaseb_target()
     await message.reply_text("Target Jaseb dihapus.")
