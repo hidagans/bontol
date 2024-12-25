@@ -1,6 +1,6 @@
 import asyncio
-from pyrogram import client
-from ubot.core.database import *
+from pyrogram import Client
+from ubot.core.database import jaseb_db
 
 # Inisialisasi variabel global
 jaseb_active = False
@@ -21,7 +21,7 @@ async def save_jaseb_settings():
     await jaseb_db.set_jaseb_interval(jaseb_interval)
     await jaseb_db.set_jaseb_target(jaseb_target)
 
-async def set_jaseb_active(active: bool, client):
+async def set_jaseb_active(active: bool, client: Client):
     global jaseb_active
     jaseb_active = active
     if active:
@@ -39,10 +39,13 @@ async def set_jaseb_interval(interval: int):
 
 async def set_jaseb_target(target: int):
     global jaseb_target
+    # Memastikan ID grup atau channel memiliki awalan -100
+    if not str(target).startswith("-100"):
+        target = int(f"-100{target}")
     jaseb_target = target
     await save_jaseb_settings()
 
-async def jaseb_sender(client):
+async def jaseb_sender(client: Client):
     global jaseb_active, jaseb_text, jaseb_interval, jaseb_target
     while jaseb_active:
         if jaseb_target:
