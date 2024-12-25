@@ -1,4 +1,5 @@
 from ubot import *
+from ubot.core.database import jaseb_db
 
 __MODULE__ = "jaseb"
 __HELP__ = """
