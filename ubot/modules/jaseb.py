@@ -69,7 +69,7 @@ async def info_jaseb_command(client: Client, message: Message):
     jaseb_status, jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
 
     # Periksa apakah jaseb_targets adalah iterable
-   print(f"jaseb_targets: {jaseb_targets} (type: {type(jaseb_targets)})")
+    print(f"jaseb_targets: {jaseb_targets} (type: {type(jaseb_targets)})")
     if isinstance(jaseb_targets, (list, set, tuple)):
         targets_str = ', '.join(str(target) for target in jaseb_targets)
     else:
