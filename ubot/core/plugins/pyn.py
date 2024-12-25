@@ -67,9 +67,14 @@ async def monitor_invoices():
 
 # Fungsi untuk menangani callback tambah/kurang bulan
 async def tambah_or_kurang(client, callback_query):
-    BULAN = int(callback_query.data.split()[1])
+    data = callback_query.data.split()
+    if len(data) < 2:
+        await callback_query.answer("Data callback tidak lengkap.")
+        return
+
+    BULAN = int(data[1])
     HARGA = 30  # Harga per bulan dalam ribuan
-    QUERY = callback_query.data.split()[0]
+    QUERY = data[0]
     try:
         if QUERY == "kurang":
             if BULAN > 1:
@@ -88,6 +93,11 @@ async def tambah_or_kurang(client, callback_query):
         print(f"Error in tambah_or_kurang: {e}")
 
 async def confirm_callback(client, callback_query):
+    data = callback_query.data.split()
+    if len(data) < 2:
+        await callback_query.answer("Data callback tidak lengkap.")
+        return
+
     user_id = int(callback_query.from_user.id)
     full_name = f"{callback_query.from_user.first_name} {callback_query.from_user.last_name or ''}"
     get = await bot.get_users(user_id)
@@ -101,7 +111,7 @@ async def confirm_callback(client, callback_query):
         payer_email = email_message.text
         
         # Mendapatkan jumlah bulan dari callback data
-        bulan = int(callback_query.data.split()[1])
+        bulan = int(data[1])
         amount = 30 * bulan * 1000  # Menghitung jumlah pembayaran
         
         # Membuat invoice
