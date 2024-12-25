@@ -2,7 +2,7 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from ubot import get_prefix
-from ubot.core.database import jaseb_db
+from ubot.core.database import *
 from ubot.core.helpers.client import PY
 
 __MODULE__ = "jaseb"
