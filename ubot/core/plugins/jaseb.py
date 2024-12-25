@@ -1,7 +1,9 @@
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from ubot import ubot, get_arg
+from ubot import get_arg
+from ubot.core.database import jaseb_db
+from ubot.core.helpers.client import PY
 
 # Inisialisasi variabel global
 jaseb_active = False
@@ -9,7 +11,20 @@ jaseb_text = "Pesan default"
 jaseb_interval = 60  # Interval waktu dalam detik
 jaseb_target = None
 
-@PY.UBOT("setjaseb")
+# Fungsi untuk memuat pengaturan dari database
+async def load_jaseb_settings():
+    global jaseb_text, jaseb_interval, jaseb_target
+    jaseb_text = await jaseb_db.get_jaseb_text() or jaseb_text
+    jaseb_interval = await jaseb_db.get_jaseb_interval() or jaseb_interval
+    jaseb_target = await jaseb_db.get_jaseb_target() or jaseb_target
+
+# Fungsi untuk menyimpan pengaturan ke database
+async def save_jaseb_settings():
+    await jaseb_db.set_jaseb_text(jaseb_text)
+    await jaseb_db.set_jaseb_interval(jaseb_interval)
+    await jaseb_db.set_jaseb_target(jaseb_target)
+
+@PY.UBOT("setjaseb", SUDO=True)
 async def set_jaseb(client: Client, message: Message):
     global jaseb_active
     arg = get_arg(message)
@@ -23,28 +38,34 @@ async def set_jaseb(client: Client, message: Message):
     else:
         await message.reply_text("Gunakan perintah .setjaseb on/off")
 
-@PY.UBOY("setjasebtext")
+@PY.UBOT("setjasebtext", SUDO=True)
 async def set_jaseb_text(client: Client, message: Message):
     global jaseb_text
     jaseb_text = get_arg(message)
+    await save_jaseb_settings()
     await message.reply_text(f"Teks Jaseb diatur ke: {jaseb_text}")
 
-@PY.UBOT("setjasebinterval")
+@PY.UBOT("setjasebinterval", SUDO=True)
 async def set_jaseb_interval(client: Client, message: Message):
     global jaseb_interval
     try:
         jaseb_interval = int(get_arg(message))
+        await save_jaseb_settings()
         await message.reply_text(f"Interval Jaseb diatur ke: {jaseb_interval} detik")
     except ValueError:
         await message.reply_text("Interval harus berupa angka.")
 
-@PY.UBOT("setjasebtarget")
+@PY.UBOT("setjasebtarget", SUDO=True)
 async def set_jaseb_target(client: Client, message: Message):
     global jaseb_target
-    jaseb_target = get_arg(message)
-    await message.reply_text(f"Target Jaseb diatur ke: {jaseb_target}")
+    try:
+        jaseb_target = int(get_arg(message))
+        await save_jaseb_settings()
+        await message.reply_text(f"Target Jaseb diatur ke: {jaseb_target}")
+    except ValueError:
+        await message.reply_text("ID grup harus berupa angka.")
 
-async def jaseb_sender(client, message):
+async def jaseb_sender(client: Client):
     global jaseb_active, jaseb_text, jaseb_interval, jaseb_target
     while jaseb_active:
         if jaseb_target:
@@ -53,3 +74,6 @@ async def jaseb_sender(client, message):
             except Exception as e:
                 print(f"Error sending message: {e}")
         await asyncio.sleep(jaseb_interval)
+
+# Memuat pengaturan saat bot dijalankan
+asyncio.create_task(load_jaseb_settings())
