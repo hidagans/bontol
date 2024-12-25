@@ -365,6 +365,8 @@ async def copy_ubot_msg(client, message):
                     await infomsg.delete()
                 except Exception:
                     await download_media_copy(get, client, infomsg, message)
+            except PeerIdInvalid:
+                await infomsg.edit("Tidak dapat mengakses channel atau grup private. Pastikan bot telah ditambahkan ke channel atau grup tersebut.")
             except Exception as e:
                 await infomsg.edit(str(e))
         else:
@@ -373,6 +375,8 @@ async def copy_ubot_msg(client, message):
                 get = await client.get_messages(chat, msg_id)
                 await get.copy(message.chat.id, reply_to_message_id=msg.id)
                 await infomsg.delete()
+            except PeerIdInvalid:
+                await infomsg.edit("Tidak dapat mengakses channel atau grup private. Pastikan bot telah ditambahkan ke channel atau grup tersebut.")
             except Exception:
                 try:
                     text = f"get_msg {id(message)}"
