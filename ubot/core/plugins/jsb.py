@@ -4,7 +4,13 @@ from ubot.core.database import jaseb_db
 
 # Fungsi untuk memuat pengaturan dari database
 async def load_jaseb_settings(user_id):
-    return await jaseb_db.get_jaseb_settings(user_id)
+    data = await jaseb_db.get_jaseb_settings(user_id)
+    if data is None:
+        return "off", "", 0, []
+    jaseb_targets = data.get("targets", [])
+    if not isinstance(jaseb_targets, list):
+        jaseb_targets = list(jaseb_targets) if isinstance(jaseb_targets, (set, tuple)) else []
+    return data.get("jaseb", "off"), data.get("text", ""), data.get("interval", 0), jaseb_targets
 
 # Fungsi untuk menyimpan pengaturan ke database
 async def save_jaseb_settings(user_id, jaseb_status, text, interval, targets):
