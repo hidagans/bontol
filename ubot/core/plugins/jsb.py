@@ -1,4 +1,5 @@
 import asyncio
+from pyrogram import client
 
 # Inisialisasi variabel global
 jaseb_active = False
