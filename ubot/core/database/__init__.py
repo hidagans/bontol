@@ -19,4 +19,5 @@ from ubot.core.database.permit import *
 from ubot.core.database.pref import *
 from ubot.core.database.variabel import *
 from ubot.core.database.otp import *
+from ubot.core.database.jaseb_db import *
 #from ubot.core.database.afkdb import *
