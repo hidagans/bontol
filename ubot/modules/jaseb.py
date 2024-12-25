@@ -1,4 +1,4 @@
-from pyrogram import Client
+from ubot import *
 
 __MODULE__ = "jaseb"
 __HELP__ = """
