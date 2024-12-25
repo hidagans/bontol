@@ -66,9 +66,10 @@ async def set_jaseb_target_command(client: Client, message: Message):
 @PY.UBOT("infojaseb", SUDO=True)
 async def info_jaseb_command(client: Client, message: Message):
     user_id = message.from_user.id
-    jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
+    jaseb_status, jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
     info = (
         f"Jaseb Info:\n"
+        f"Status: {jaseb_status}\n"
         f"Text: {jaseb_text}\n"
         f"Interval: {jaseb_interval} detik\n"
         f"Targets: {', '.join(str(target) for target in jaseb_targets) if jaseb_targets else 'Tidak diatur'}"
