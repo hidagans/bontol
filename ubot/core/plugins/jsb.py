@@ -2,13 +2,21 @@ import asyncio
 from pyrogram import Client
 from ubot.core.database import jaseb_db
 
-# Fungsi untuk memuat pengaturan dari database
 async def load_jaseb_settings(user_id):
-    return await jaseb_db.get_jaseb_settings(user_id)
+    data = await jaseb_db.get_jaseb_settings(user_id)
+    if data is None:
+        return "off", "", 0, []
+    jaseb_targets = data.get("targets", [])
+    if not isinstance(jaseb_targets, list):
+        jaseb_targets = list(jaseb_targets) if isinstance(jaseb_targets, (set, tuple)) else []
+    return data.get("jaseb", "off"), data.get("text", ""), data.get("interval", 0), jaseb_targets
 
-# Fungsi untuk menyimpan pengaturan ke database
+
 async def save_jaseb_settings(user_id, jaseb_status, jaseb_text, jaseb_interval, jaseb_targets):
+    if not isinstance(jaseb_targets, list):
+        jaseb_targets = list(jaseb_targets)
     await jaseb_db.set_jaseb_settings(user_id, jaseb_status, jaseb_text, jaseb_interval, jaseb_targets)
+
 
 async def set_jaseb_active(user_id, active: bool, client: Client):
     jaseb_status, jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
