@@ -1,15 +1,8 @@
 from datetime import datetime, timedelta
-
 from dateutil.relativedelta import relativedelta
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pytz import timezone
-
 from ubot import *
-
-# ========================== #
-# 𝔻𝔸𝕋𝔸𝔹𝔸𝕊𝔼 ℙℝ𝔼𝕄𝕀𝕌𝕄 #
-# ========================== #
-
 
 async def prem_user(client, message):
     Tm = await message.reply("<b>Processing... . . .</b>")
@@ -19,18 +12,23 @@ async def prem_user(client, message):
         return await Tm.edit(
             "Untuk menggunakan perintah ini, anda harus menjadi Reseller"
         )
-    user_id, get_bulan = await extract_user_and_reason(message)
-    if not user_id:
-        return await Tm.edit(f"<b>{message.text} [user_id/username - bulan]</b>")
+    try:
+        user_id = int(message.command[1])
+        get_bulan = int(message.command[2]) if len(message.command) > 2 else 1
+    except (IndexError, ValueError):
+        return await Tm.edit(f"<b>{message.text} [user_id - bulan]</b>")
+    
     try:
         get_id = (await client.get_users(user_id)).id
     except Exception as error:
+        if "PEER_ID_INVALID" in str(error):
+            return await Tm.edit("Pengguna tidak ditemukan, silahkan lakukan start bot terlebih dahulu.")
         return await Tm.edit(str(error))
-    if not get_bulan:
-        get_bulan = 1
+    
     premium = await get_prem()
     if get_id in premium:
-        return await Tm.edit(f"Pengguna denga ID : `{get_id}` sudah memiliki akses !")
+        return await Tm.edit(f"Pengguna dengan ID : `{get_id}` sudah memiliki akses !")
+    
     added = await add_prem(get_id)
     if added:
         now = datetime.now(timezone("Asia/Jakarta"))
@@ -38,7 +36,7 @@ async def prem_user(client, message):
         expired_formatted = expired.strftime("%d %b %Y")
         await set_expired_date(get_id, expired)
         await Tm.edit(
-            f"✅ {get_id} Berhasil diaktifkan selama `{get_bulan}` bulan\n\nKadaluwarsa pada : `{expired_formatted}` \n\nSilahkan Buat Di Userbot @{bot.me.username}."
+            f" {get_id} Berhasil diaktifkan selama `{get_bulan}` bulan\n\nKadaluwarsa pada : `{expired_formatted}` \n\nSilahkan Buat Di Userbot @{bot.me.username}."
         )
         await bot.send_message(
             get_id,
@@ -55,16 +53,16 @@ async def prem_user(client, message):
         )
         await bot.send_message(
             OWNER_ID,
-            f"• {message.from_user.id} ─> {get_id} •",
+            f" {message.from_user.id} > {get_id} ",
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
                         InlineKeyboardButton(
-                            "👤 ᴘʀᴏғɪʟ",
+                            " ",
                             callback_data=f"profil {message.from_user.id}",
                         ),
                         InlineKeyboardButton(
-                            "ᴘʀᴏғɪʟ 👤", callback_data=f"profil {get_id}"
+                            " ", callback_data=f"profil {get_id}"
                         ),
                     ],
                 ]
