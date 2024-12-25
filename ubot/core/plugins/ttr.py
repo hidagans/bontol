@@ -8,10 +8,7 @@ async def cb_tutor(client, callback_query):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(text="Admin", callback_data="start_admin"),
-                ],
-                [
-                    InlineKeyboardButton(text="Tutorial Ambil API ID", url="https://t.me/reloadpost/24"),
+                    InlineKeyboardButton(text="Admin", url="https://t.me/IamYourMajesty"),
                 ],
                 [
                     InlineKeyboardButton(text="Kembali", callback_data="start0"),
