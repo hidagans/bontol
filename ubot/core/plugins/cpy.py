@@ -338,8 +338,6 @@ async def copy_bot_msg(client, message):
 
 
 async def copy_ubot_msg(client, message):
-    
-    
     msg = message.reply_to_message or message
     infomsg = await message.reply("<code>Processing...</code>")
     link = get_arg(message)
@@ -348,15 +346,18 @@ async def copy_ubot_msg(client, message):
             f"<b><code>{message.text}</code> [link]</b>"
         )
         
-    
-    
     if link.startswith(("https", "t.me")):
-        msg_id = int(link.split("/")[-1])
-        
-        
+        try:
+            msg_id = int(link.split("/")[-1])
+        except ValueError:
+            return await infomsg.edit("Link tidak valid. Tidak dapat mengurai ID pesan.")
         
         if "t.me/c/" in link:
-            chat = int("-100" + str(link.split("/")[-2]))
+            try:
+                chat = int("-100" + str(link.split("/")[-2]))
+            except ValueError:
+                return await infomsg.edit("Link tidak valid. Tidak dapat mengurai ID chat.")
+            
             try:
                 get = await client.get_messages(chat, msg_id)
                 try:
@@ -386,8 +387,6 @@ async def copy_ubot_msg(client, message):
                     await infomsg.delete()
                 except Exception as error:
                     await infomsg.edit(f"{str(error)}")
-                    
-    
     else:
         await infomsg.edit("Nyolong dihentikan")
 
