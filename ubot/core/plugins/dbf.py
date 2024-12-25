@@ -13,8 +13,9 @@ async def prem_user(client, message):
             "Untuk menggunakan perintah ini, anda harus menjadi Reseller"
         )
     try:
-        user_id = int(message.command[1])
-        get_bulan = int(message.command[2]) if len(message.command) > 2 else 1
+        args = message.text.split()
+        user_id = int(args[1])
+        get_bulan = int(args[2]) if len(args) > 2 else 1
     except (IndexError, ValueError):
         return await Tm.edit(f"<b>{message.text} [user_id - bulan]</b>")
     
