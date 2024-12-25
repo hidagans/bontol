@@ -8,7 +8,7 @@ from ubot import *
 
 CONFIRM_PAYMENT = []
 
-xendit_api_key = "xnd_production_3MCFGgmQbZ2p1GhKcV80gWmTPoIVjt68qmkY92CD9B616mYrkOOuLvL3YUlCQuZ"
+xendit_api_key = "xnd_development_1o8Vi1YRZewXs5tmDHFt760Ifoj7g9GQy8XJCNaRQyq9jkTNWcq3OlwUl2pi7"
 xendit = Xendit(api_key=xendit_api_key)
 
 # Fungsi untuk membuat invoice
