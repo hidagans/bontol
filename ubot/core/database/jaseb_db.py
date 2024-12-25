@@ -1,4 +1,4 @@
-from ubot.core.database import mongo_db
+from ubot.core.database import mongodb
 
 async def get_jaseb_text():
     return await db.get("jaseb_text")
