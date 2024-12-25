@@ -1,14 +1,4 @@
 from ubot import *
-from ubot.core.plugins.jsb import (
-    load_jaseb_settings,
-    save_jaseb_settings,
-    set_jaseb_active,
-    set_jaseb_text,
-    set_jaseb_interval,
-    add_jaseb_target,
-    remove_jaseb_target,
-    jaseb_sender
-)
 
 __MODULE__ = "jaseb"
 __HELP__ = """
