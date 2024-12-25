@@ -116,3 +116,20 @@ def plus_minus(query, user_id):
         [InlineKeyboardButton("❌ Batalkan ❌", callback_data=f"home {user_id}"),],
     ]
     return button
+
+# Fungsi untuk menampilkan teks pembayaran
+def TEXT_PAYMENT(harga, total, bulan):
+    return f"""
+<b>💬 Silahkan melakukan pembayaran terlebih dahulu</b>
+
+<b>🎟️ Harga perbulan: {harga}.000</b>
+
+<b>💳 Metode Pembayaran:</b>
+<b>├ QRIS</b>
+<b>└────•OTOMATIS PAYMENT</b>
+
+<b>🔖 Total Harga: Rp {total}.000</b>
+<b>🗓️ Total Bulan: {bulan}</b>
+
+<b>Setelah pembayaran, silakan klik tombol di bawah untuk melakukan konfirmasi.</b>
+"""
