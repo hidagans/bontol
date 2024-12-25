@@ -11,13 +11,15 @@ xendit_api_key = "xnd_production_3MCFGgmQbZ2p1GhKcV80gWmTPoIVjt68qmkY92CD9B616mY
 xendit = Xendit(api_key=xendit_api_key)
 
 # Fungsi untuk membuat invoice
-async def create_invoice(amount, user_id):
+async def create_invoice(amount, user_id, payer_email):
     invoice = xendit.Invoice.create(
-        amount=amount * 1000,  # Konversi ke format IDR
+        amount=amount,
         description=f"Payment for user {user_id}",
-        external_id=f"user_{user_id}_{datetime.now().timestamp()}",
+        external_id=f"user_{user_id}",
+        payer_email=payer_email
     )
-    return invoice.invoice_url, invoice.id
+    return invoice['invoice_url'], invoice['id']
+
 
 # Fungsi untuk memeriksa status invoice
 async def check_invoice_status(invoice_id):
@@ -84,26 +86,34 @@ async def tambah_or_kurang(client, callback_query):
     except Exception as e:
         print(f"Error in tambah_or_kurang: {e}")
 
-# Fungsi untuk memproses pembayaran
 async def confirm_callback(client, callback_query):
-    user_id = callback_query.from_user.id
-    bulan = int(callback_query.data.split()[1])
+    user_id = int(callback_query.from_user.id)
+    full_name = f"{callback_query.from_user.first_name} {callback_query.from_user.last_name or ''}"
+    get = await bot.get_users(user_id)
+    CONFIRM_PAYMENT.append(get.id)
     try:
-        invoice_url, invoice_id = await create_invoice(30 * bulan, user_id)
-        CONFIRM_PAYMENT.append((user_id, (invoice_id, bulan)))
-        buttons = [[InlineKeyboardButton("❌ Batalkan", callback_data=f"home {user_id}")]]
-        await callback_query.message.edit_text(
-            f"""
-<b>💬 Silahkan lakukan pembayaran melalui tautan berikut:</b>
-{invoice_url}
-
-<b>🗓️ Masa aktif: {bulan} bulan</b>
-<b>🔖 Total: Rp {30 * bulan}.000</b>
-""",
-            reply_markup=InlineKeyboardMarkup(buttons),
+        button = [[InlineKeyboardButton("❌ Batalkan", callback_data=f"home {user_id}")]]
+        
+        # Meminta email dari pengguna
+        await bot.send_message(user_id, "Silakan masukkan email Anda untuk melanjutkan pembayaran.")
+        email_message = await bot.listen(user_id)
+        payer_email = email_message.text
+        
+        # Membuat invoice
+        invoice_url, invoice_id = await create_invoice(amount, user_id, payer_email)
+        
+        await callback_query.message.delete()
+        pesan = await bot.ask(
+            user_id,
+            f"<b>💬 Silakan lakukan pembayaran terlebih dahulu di bawah ini\n {invoice_url}</b>",
+            reply_markup=InlineKeyboardMarkup(button),
+            timeout=300,
         )
-    except Exception as e:
-        print(f"Error in confirm_callback: {e}")
+    except asyncio.TimeoutError as out:
+        if get.id in CONFIRM_PAYMENT:
+            CONFIRM_PAYMENT.remove(get.id)
+            return await bot.send_message(get.id, "Pembatalan otomatis.")
+
 
 # Fungsi untuk membuat tombol plus/minus
 def plus_minus(query, user_id):
