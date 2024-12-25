@@ -7,7 +7,7 @@ from xendit import Xendit
 
 CONFIRM_PAYMENT = []
 
-xendit_api_key = "YOUR_XENDIT_API_KEY"
+xendit_api_key = "xnd_production_3MCFGgmQbZ2p1GhKcV80gWmTPoIVjt68qmkY92CD9B616mYrkOOuLvL3YUlCQuZ"
 xendit = Xendit(api_key=xendit_api_key)
 
 # Fungsi untuk membuat invoice
