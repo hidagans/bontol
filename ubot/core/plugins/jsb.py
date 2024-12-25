@@ -1,5 +1,6 @@
 import asyncio
 from pyrogram import client
+from ubot.core.database import *
 
 # Inisialisasi variabel global
 jaseb_active = False
