@@ -16,9 +16,9 @@ async def get_jaseb_interval():
 async def set_jaseb_interval(interval):
     await jaseb.update_one({"_id": "jaseb_interval"}, {"$set": {"value": interval}}, upsert=True)
 
-async def get_jaseb_target():
-    result = await jaseb.find_one({"_id": "jaseb_target"})
-    return result["value"] if result else None
+async def get_jaseb_targets():
+    result = await jaseb.find_one({"_id": "jaseb_targets"})
+    return result["value"] if result else []
 
-async def set_jaseb_target(target):
-    await jaseb.update_one({"_id": "jaseb_target"}, {"$set": {"value": target}}, upsert=True)
+async def set_jaseb_targets(targets):
+    await jaseb.update_one({"_id": "jaseb_targets"}, {"$set": {"value": targets}}, upsert=True)
