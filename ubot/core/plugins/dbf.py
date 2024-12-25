@@ -32,8 +32,12 @@ async def prem_user(client, message):
     added = await add_prem(get_id)
     if added:
         now = datetime.now(timezone("Asia/Jakarta"))
-        expired = now + relativedelta(months=int(get_bulan))
-        expired_formatted = expired.strftime("%d %b %Y")
+        try:
+            expired = now + relativedelta(months=int(get_bulan))
+            expired_formatted = expired.strftime("%d %b %Y")
+        except ValueError as e:
+            return await Tm.edit(f"Error dalam perhitungan tanggal kedaluwarsa: {e}")
+        
         await set_expired_date(get_id, expired)
         await Tm.edit(
             f" {get_id} Berhasil diaktifkan selama `{get_bulan}` bulan\n\nKadaluwarsa pada : `{expired_formatted}` \n\nSilahkan Buat Di Userbot @{bot.me.username}."
