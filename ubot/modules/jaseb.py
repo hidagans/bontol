@@ -66,7 +66,7 @@ async def info_jaseb_command(client: Client, message: Message):
         f"Jaseb Info:\n"
         f"Text: {jaseb_text}\n"
         f"Interval: {jaseb_interval} detik\n"
-        f"Targets: {', '.join(map(str, jaseb_targets)) if jaseb_targets else 'Tidak diatur'}"
+        f"Targets: {', '.join(str(target) for target in jaseb_targets) if jaseb_targets else 'Tidak diatur'}"
     )
     await message.reply_text(info)
 
