@@ -19,7 +19,7 @@ async def create_invoice(amount, user_id, payer_email):
         external_id=f"user_{user_id}",
         payer_email=payer_email
     )
-    return invoice['invoice_url'], invoice['id']
+    return invoice.invoice_url, invoice.id
 
 
 # Fungsi untuk memeriksa status invoice
