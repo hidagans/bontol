@@ -2,59 +2,45 @@ import asyncio
 from pyrogram import Client
 from ubot.core.database import jaseb_db
 
-# Inisialisasi variabel global
-jaseb_active = False
-jaseb_text = "Pesan default"
-jaseb_interval = 60  # Interval waktu dalam detik
-jaseb_targets = []
-
 # Fungsi untuk memuat pengaturan dari database
-async def load_jaseb_settings():
-    global jaseb_text, jaseb_interval, jaseb_targets
-    jaseb_text = await jaseb_db.get_jaseb_text() or jaseb_text
-    jaseb_interval = await jaseb_db.get_jaseb_interval() or jaseb_interval
-    jaseb_targets = await jaseb_db.get_jaseb_targets() or jaseb_targets
+async def load_jaseb_settings(user_id):
+    return await jaseb_db.get_jaseb_settings(user_id)
 
 # Fungsi untuk menyimpan pengaturan ke database
-async def save_jaseb_settings():
-    await jaseb_db.set_jaseb_text(jaseb_text)
-    await jaseb_db.set_jaseb_interval(jaseb_interval)
-    await jaseb_db.set_jaseb_targets(jaseb_targets)
+async def save_jaseb_settings(user_id, jaseb_text, jaseb_interval, jaseb_targets):
+    await jaseb_db.set_jaseb_settings(user_id, jaseb_text, jaseb_interval, jaseb_targets)
 
-async def set_jaseb_active(active: bool, client: Client):
-    global jaseb_active
-    jaseb_active = active
+async def set_jaseb_active(user_id, active: bool, client: Client):
     if active:
-        asyncio.create_task(jaseb_sender(client))
+        asyncio.create_task(jaseb_sender(user_id, client))
 
-async def set_jaseb_text(text: str):
-    global jaseb_text
+async def set_jaseb_text(user_id, text: str):
+    jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
     jaseb_text = text
-    await save_jaseb_settings()
+    await save_jaseb_settings(user_id, jaseb_text, jaseb_interval, jaseb_targets)
 
-async def set_jaseb_interval(interval: int):
-    global jaseb_interval
+async def set_jaseb_interval(user_id, interval: int):
+    jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
     jaseb_interval = interval
-    await save_jaseb_settings()
+    await save_jaseb_settings(user_id, jaseb_text, jaseb_interval, jaseb_targets)
 
-async def add_jaseb_target(target: int):
-    global jaseb_targets
-    # Memastikan ID grup atau channel memiliki awalan -100
+async def add_jaseb_target(user_id, target: int):
+    jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
     if not str(target).startswith("-100"):
         target = int(f"-100{target}")
     if target not in jaseb_targets:
         jaseb_targets.append(target)
-        await save_jaseb_settings()
+        await save_jaseb_settings(user_id, jaseb_text, jaseb_interval, jaseb_targets)
 
-async def remove_jaseb_target(target: int):
-    global jaseb_targets
+async def remove_jaseb_target(user_id, target: int):
+    jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
     if target in jaseb_targets:
         jaseb_targets.remove(target)
-        await save_jaseb_settings()
+        await save_jaseb_settings(user_id, jaseb_text, jaseb_interval, jaseb_targets)
 
-async def jaseb_sender(client: Client):
-    global jaseb_active, jaseb_text, jaseb_interval, jaseb_targets
-    while jaseb_active:
+async def jaseb_sender(user_id, client: Client):
+    jaseb_text, jaseb_interval, jaseb_targets = await load_jaseb_settings(user_id)
+    while True:
         for target in jaseb_targets:
             try:
                 await client.send_message(target, jaseb_text)
