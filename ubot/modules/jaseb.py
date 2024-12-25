@@ -1,4 +1,4 @@
-from ubot import *
+from ubot import **
 from ubot.core.plugins.jsb import (
     load_jaseb_settings,
     save_jaseb_settings,
