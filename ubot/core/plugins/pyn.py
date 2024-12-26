@@ -6,7 +6,7 @@ from pytz import timezone
 from xendit import Xendit
 from ubot import *
 
-CONFIRM_PAYMENT = []
+PENDING_PAYMENTS = []
 
 xendit_api_key = "xnd_development_1o8Vi1YRZewXs5tmDHFt760Ifoj7g9GQy8XJCNaRQyq9jkTNWcq3OlwUl2pi7"
 xendit = Xendit(api_key=xendit_api_key)
@@ -54,16 +54,16 @@ async def failed_payment(user_id):
 # Fungsi untuk memantau invoice
 async def monitor_invoices():
     while True:
-        print(f"Type of CONFIRM_PAYMENT: {type(CONFIRM_PAYMENT)}")
-        for user_id, invoice_data in list(CONFIRM_PAYMENT):
+        print(f"Type of PENDING_PAYMENTS: {type(PENDING_PAYMENTS)}")
+        for user_id, invoice_data in list(PENDING_PAYMENTS):
             invoice_id, bulan = invoice_data
             status = await check_invoice_status(invoice_id)
             if status == "PAID":
                 await success_payment(user_id, bulan)
-                CONFIRM_PAYMENT.remove((user_id, invoice_data))
+                PENDING_PAYMENTS.remove((user_id, invoice_data))
             elif status in ["EXPIRED", "FAILED"]:
                 await failed_payment(user_id)
-                CONFIRM_PAYMENT.remove((user_id, invoice_data))
+                PENDING_PAYMENTS.remove((user_id, invoice_data))
         await asyncio.sleep(60)  # Cek setiap 1 menit
 
 # Fungsi untuk menangani callback tambah/kurang bulan
@@ -102,7 +102,7 @@ async def confirm_callback(client, callback_query):
     user_id = int(callback_query.from_user.id)
     full_name = f"{callback_query.from_user.first_name} {callback_query.from_user.last_name or ''}"
     get = await bot.get_users(user_id)
-    CONFIRM_PAYMENT.append((get.id, (data[1], 1)))  # Menambahkan tuple dengan bulan default 1
+    PENDING_PAYMENTS.append((get.id, (data[1], 1)))  # Menambahkan tuple dengan bulan default 1
     try:
         button = [[InlineKeyboardButton("❌ Batalkan", callback_data=f"home {user_id}")]]
         
@@ -126,8 +126,8 @@ async def confirm_callback(client, callback_query):
             timeout=300,
         )
     except asyncio.TimeoutError as out:
-        if get.id in CONFIRM_PAYMENT:
-            CONFIRM_PAYMENT.remove((get.id, (data[1], 1)))
+        if get.id in PENDING_PAYMENTS:
+            PENDING_PAYMENTS.remove((get.id, (data[1], 1)))
             return await bot.send_message(get.id, "Pembatalan otomatis.")
 
 # Fungsi untuk membuat tombol plus/minus
