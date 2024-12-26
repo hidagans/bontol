@@ -16,9 +16,9 @@ async def loader_user(user_id, _ubot):
         await rem_expired_date(user_id)
         for X in await get_chat(user_id):
             await remove_chat(user_id, X)
-        print(f"✅ {user_id} 𝗕𝗘𝗥𝗛𝗔𝗦𝗜𝗟 𝗗𝗜𝗛𝗔𝗣𝗨𝗦")
+        print(f" {user_id}  ")
     except Exception as e:
-        print(f"❌ Error occurred: {e}")
+        print(f" Error occurred: {e}")
 
 async def main():
     tasks = [
@@ -33,7 +33,7 @@ async def main():
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     try:
-        loop.create_task(monitor_invoices())
+        loop.create_task(monitor_invoices())  # Pastikan monitor_invoices dijalankan
         loop.run_until_complete(main())
     except KeyboardInterrupt:
         pass
@@ -43,5 +43,3 @@ if __name__ == "__main__":
     finally:
         loop.stop()
         logging.info("------------------------ Stopped Services ------------------------")
-#    with ThreadPoolExecutor() as pool:
-#        loop.set_default_executor(pool)
