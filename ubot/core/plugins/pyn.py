@@ -23,7 +23,7 @@ async def create_invoice(amount, user_id, payer_email):
 
 # Fungsi untuk memeriksa status invoice
 async def check_invoice_status(invoice_id):
-    invoice = xendit.Invoice.get(id=invoice_id)
+    invoice = xendit.Invoice.get(invoice_id=invoice_id)
     return invoice.status
 
 # Fungsi untuk menangani pembayaran sukses
