@@ -55,6 +55,7 @@ async def failed_payment(user_id):
 async def monitor_invoices():
     while True:
         print(f"Type of PENDING_PAYMENTS: {type(PENDING_PAYMENTS)}")
+        print(PENDING_PAYMENTS)
         for user_id, invoice_data in list(PENDING_PAYMENTS):
             invoice_id, bulan = invoice_data
             status = await check_invoice_status(invoice_id)
