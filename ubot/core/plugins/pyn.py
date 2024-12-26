@@ -77,6 +77,7 @@ async def tambah_or_kurang(client, callback_query):
         print(f"Error in tambah_or_kurang: {e}")
 
 async def confirm_callback(client, callback_query):
+    global CONFIRM_PAYMENT  # Deklarasikan variabel global
     data = callback_query.data.split()
     if len(data) < 2:
         await callback_query.answer("Data callback tidak lengkap.")
