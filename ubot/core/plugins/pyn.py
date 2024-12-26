@@ -54,6 +54,7 @@ async def failed_payment(user_id):
 # Fungsi untuk memantau invoice
 async def monitor_invoices():
     while True:
+        print(f"Type of CONFIRM_PAYMENT: {type(CONFIRM_PAYMENT)}")
         for user_id, invoice_data in list(CONFIRM_PAYMENT):
             invoice_id, bulan = invoice_data
             status = await check_invoice_status(invoice_id)
