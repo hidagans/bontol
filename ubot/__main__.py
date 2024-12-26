@@ -4,6 +4,7 @@ from atexit import register
 from pyrogram import idle
 from pyrogram.errors import RPCError
 from ubot import *
+from ubot.core.plugins.pyn import monitor_invoices  # Pastikan import monitor_invoices
 
 async def loader_user(user_id, _ubot):
     ubot_ = Ubot(**_ubot)
