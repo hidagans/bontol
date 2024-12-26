@@ -48,8 +48,7 @@ async def failed_payment(user_id):
         """
 <b>❌ Pembayaran gagal atau kadaluarsa.</b>
 <b>💬 Silakan coba lagi.</b>
-        """
-
+        """)
 # Fungsi untuk menangani callback tambah/kurang bulan
 async def tambah_or_kurang(client, callback_query):
     data = callback_query.data.split()
