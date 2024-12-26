@@ -21,7 +21,6 @@ async def create_invoice(amount, user_id, payer_email):
     )
     return invoice.invoice_url, invoice.id
 
-
 # Fungsi untuk memeriksa status invoice
 async def check_invoice_status(invoice_id):
     invoice = xendit.Invoice.get(invoice_id)
@@ -31,6 +30,7 @@ async def check_invoice_status(invoice_id):
 async def success_payment(user_id, bulan):
     now = datetime.now(timezone("Asia/Jakarta"))
     expired = now + relativedelta(months=bulan)
+    await add_prem(user_id)
     await set_expired_date(user_id, expired)
     await bot.send_message(
         user_id,
@@ -101,7 +101,7 @@ async def confirm_callback(client, callback_query):
     user_id = int(callback_query.from_user.id)
     full_name = f"{callback_query.from_user.first_name} {callback_query.from_user.last_name or ''}"
     get = await bot.get_users(user_id)
-    CONFIRM_PAYMENT.append(get.id)
+    CONFIRM_PAYMENT.append((get.id, (data[1], 1)))  # Menambahkan tuple dengan bulan default 1
     try:
         button = [[InlineKeyboardButton("❌ Batalkan", callback_data=f"home {user_id}")]]
         
@@ -126,9 +126,8 @@ async def confirm_callback(client, callback_query):
         )
     except asyncio.TimeoutError as out:
         if get.id in CONFIRM_PAYMENT:
-            CONFIRM_PAYMENT.remove(get.id)
+            CONFIRM_PAYMENT.remove((get.id, (data[1], 1)))
             return await bot.send_message(get.id, "Pembatalan otomatis.")
-
 
 # Fungsi untuk membuat tombol plus/minus
 def plus_minus(query, user_id):
