@@ -6,7 +6,7 @@ from pytz import timezone
 from xendit import Xendit
 from ubot import *
 
-PENDING_PAYMENTS = []
+CONFIRM_PAYMENT = []
 
 xendit_api_key = "xnd_development_1o8Vi1YRZewXs5tmDHFt760Ifoj7g9GQy8XJCNaRQyq9jkTNWcq3OlwUl2pi7"
 xendit = Xendit(api_key=xendit_api_key)
@@ -49,23 +49,6 @@ async def failed_payment(user_id):
 <b>❌ Pembayaran gagal atau kadaluarsa.</b>
 <b>💬 Silakan coba lagi.</b>
         """
-    )
-
-# Fungsi untuk memantau invoice
-async def monitor_invoices():
-    while True:
-        print(f"Type of PENDING_PAYMENTS: {type(PENDING_PAYMENTS)}")
-        print(PENDING_PAYMENTS)
-        for user_id, invoice_data in list(PENDING_PAYMENTS):
-            invoice_id, bulan = invoice_data
-            status = await check_invoice_status(invoice_id)
-            if status == "PAID":
-                await success_payment(user_id, bulan)
-                PENDING_PAYMENTS.remove((user_id, invoice_data))
-            elif status in ["EXPIRED", "FAILED"]:
-                await failed_payment(user_id)
-                PENDING_PAYMENTS.remove((user_id, invoice_data))
-        await asyncio.sleep(60)  # Cek setiap 1 menit
 
 # Fungsi untuk menangani callback tambah/kurang bulan
 async def tambah_or_kurang(client, callback_query):
@@ -101,35 +84,79 @@ async def confirm_callback(client, callback_query):
         return
 
     user_id = int(callback_query.from_user.id)
-    full_name = f"{callback_query.from_user.first_name} {callback_query.from_user.last_name or ''}"
     get = await bot.get_users(user_id)
-    PENDING_PAYMENTS.append((get.id, (data[1], 1)))  # Menambahkan tuple dengan bulan default 1
     try:
-        button = [[InlineKeyboardButton("❌ Batalkan", callback_data=f"home {user_id}")]]
-        
         # Meminta email dari pengguna
         await bot.send_message(user_id, "Silakan masukkan email Anda untuk melanjutkan pembayaran.")
         email_message = await bot.listen(user_id)
         payer_email = email_message.text
-        
+
         # Mendapatkan jumlah bulan dari callback data
         bulan = int(data[1])
         amount = 30 * bulan * 1000  # Menghitung jumlah pembayaran
-        
+
         # Membuat invoice
         invoice_url, invoice_id = await create_invoice(amount, user_id, payer_email)
-        
+
+        # Tambahkan data ke CONFIRM_PAYMENT
+        CONFIRM_PAYMENT.append((user_id, (invoice_id, bulan)))
+
+        # Kirim pesan dengan tombol Cek Invoice
+        buttons = [
+            [InlineKeyboardButton("✅ Cek Invoice ✅", callback_data=f"check_invoice {invoice_id}")],
+            [InlineKeyboardButton("❌ Batalkan", callback_data=f"home {user_id}")],
+        ]
         await callback_query.message.delete()
-        pesan = await bot.ask(
+        await bot.send_message(
             user_id,
-            f"<b>💬 Silakan lakukan pembayaran terlebih dahulu di bawah ini\n {invoice_url}</b>",
-            reply_markup=InlineKeyboardMarkup(button),
-            timeout=300,
+            f"<b>💬 Silakan lakukan pembayaran terlebih dahulu di bawah ini:\n{invoice_url}</b>",
+            reply_markup=InlineKeyboardMarkup(buttons),
         )
-    except asyncio.TimeoutError as out:
-        if get.id in PENDING_PAYMENTS:
-            PENDING_PAYMENTS.remove((get.id, (data[1], 1)))
-            return await bot.send_message(get.id, "Pembatalan otomatis.")
+    except asyncio.TimeoutError:
+        # Bersihkan data dari CONFIRM_PAYMENT jika timeout
+        CONFIRM_PAYMENT = [entry for entry in CONFIRM_PAYMENT if entry[0] != user_id]
+        await bot.send_message(user_id, "❌ Pembatalan otomatis karena tidak ada respons.")
+    except Exception as e:
+        print(f"Error in confirm_callback: {e}")
+        await bot.send_message(user_id, "❌ Terjadi kesalahan saat membuat invoice.")
+
+async def check_invoice_callback(client, callback_query):
+    data = callback_query.data.split()
+    if len(data) < 2:
+        await callback_query.answer("Data callback tidak lengkap.")
+        return
+
+    invoice_id = data[1]
+    user_id = None  # Inisialisasi user_id
+
+    # Cari user_id yang sesuai dengan invoice_id
+    for uid, invoice_data in CONFIRM_PAYMENT:
+        if invoice_data[0] == invoice_id:
+            user_id = uid
+            bulan = invoice_data[1]
+            break
+
+    if user_id is None:
+        await callback_query.answer("❌ Data invoice tidak ditemukan.", show_alert=True)
+        return
+
+    try:
+        status = await check_invoice_status(invoice_id)
+        if status == "PAID":
+            await callback_query.answer("✅ Pembayaran berhasil!", show_alert=True)
+            CONFIRM_PAYMENT.remove((user_id, (invoice_id, bulan)))
+            await success_payment(user_id, bulan)
+        elif status in ["PENDING", "UNPAID"]:
+            await callback_query.answer("❌ Pembayaran belum diterima.", show_alert=True)
+        elif status == "EXPIRED":
+            await callback_query.answer("❌ Invoice telah kedaluwarsa.", show_alert=True)
+            CONFIRM_PAYMENT.remove((user_id, (invoice_id, bulan)))
+        elif status == "FAILED":
+            await callback_query.answer("❌ Pembayaran gagal.", show_alert=True)
+            CONFIRM_PAYMENT.remove((user_id, (invoice_id, bulan)))
+    except Exception as e:
+        print(f"Error in check_invoice_callback: {e}")
+        await callback_query.answer("❌ Terjadi kesalahan saat memeriksa invoice.")
 
 # Fungsi untuk membuat tombol plus/minus
 def plus_minus(query, user_id):
@@ -143,19 +170,18 @@ def plus_minus(query, user_id):
     ]
     return button
 
-# Fungsi untuk menampilkan teks pembayaran
 def TEXT_PAYMENT(harga, total, bulan):
     return f"""
-<b>💬 Silahkan melakukan pembayaran terlebih dahulu</b>
+<b>💬 Silakan melakukan pembayaran terlebih dahulu</b>
 
-<b>🎟️ Harga perbulan: {harga}.000</b>
+<b>🎟️ Harga per bulan: Rp {harga:,}</b>
 
 <b>💳 Metode Pembayaran:</b>
 <b>├ QRIS</b>
 <b>└────•OTOMATIS PAYMENT</b>
 
-<b>🔖 Total Harga: Rp {total}.000</b>
+<b>🔖 Total Harga: Rp {total:,}</b>
 <b>🗓️ Total Bulan: {bulan}</b>
 
-<b>Setelah pembayaran, silakan klik tombol di bawah untuk melakukan konfirmasi.</b>
+<b>Setelah pembayaran, klik tombol di bawah untuk konfirmasi.</b>
 """
