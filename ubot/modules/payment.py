@@ -3,7 +3,7 @@ from pyrogram import Client
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from ubot.core.plugins.pyn import create_invoice, check_invoice_status, success_payment, failed_payment, tambah_or_kurang, confirm_callback
 
-@PY.CALLBACK("^^check_invoice")
+@PY.CALLBACK("^check_invoice")
 async def check_payment_callback(client, callback_query):
     await check_invoice_callback(client, callback_query)
 
