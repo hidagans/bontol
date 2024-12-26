@@ -16,7 +16,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN", "7903768405:AAHFwUgVrnbPbB5y5oAdzjKwI-rFR5Vsv
 
 OWNER_ID = int(os.getenv("OWNER_ID", "6696975845"))
 
-USER_ID = list(map(int, os.getenv("USER_ID", "6696975845 2014405267").split()))
+USER_ID = list(map(int, os.getenv("USER_ID", "6696975845").split()))
 
 LOG_UBOT = int(os.getenv("LOG_UBOT", "-1002379610567"))
 
