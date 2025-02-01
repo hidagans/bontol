@@ -5,9 +5,9 @@ RUN apt-get update -y && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/hidagans/bottol.git /bottol
+RUN git clone https://github.com/hidagans/bontol.git /bontol
 
-WORKDIR /bottol
+WORKDIR /bontol
 
 RUN pip3 install --no-cache-dir --upgrade --requirement requirements.txt
 
