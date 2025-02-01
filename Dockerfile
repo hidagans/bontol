@@ -5,7 +5,7 @@ RUN apt-get update -y && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://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@github.com/hidagans/bottol.git /bottol
+RUN git clone https://github.com/hidagans/bottol.git /bottol
 
 WORKDIR /bottol
 
