@@ -1,0 +1,24 @@
+# BotDeploy Configuration File
+# https://botdeploy.com/docs/configuration
+
+version: "1.0"
+name: "bontol"
+description: "Telegram Bot Multi Client"
+
+# Deployment configuration
+deployment:
+  port: 3000
+
+# Optional auto-scaling configuration  
+scaling:
+  min_instances: 1
+  max_instances: 3
+  target_cpu_percent: 80
+
+# Optional health check configuration
+health_check:
+  path: /health
+  port: 3000
+  initial_delay: 10
+  interval: 30
+  timeout: 5
